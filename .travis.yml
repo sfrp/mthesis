@@ -6,5 +6,6 @@ script:
   - sudo apt-get -y install texlive-lang-cjk
   - sudo apt-get -y install texlive-latex-recommended texlive-pictures texlive-latex-extra
   - sudo apt-get -y install texlive-fonts-extra
+  - sudo apt-get -y install texlive-math-extra
   - sudo apt-get -y install latexmk
   - rake
