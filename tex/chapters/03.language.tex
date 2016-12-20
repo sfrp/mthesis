@@ -1,12 +1,14 @@
-\chapter{言語デザイン}
-\section{FRPに基づく独自の計算モデル}
+\chapter{言語デザイン}\label{sec:language}
+本研究では、記述性と省メモリ実行性を重視した組込みシステム向けFRP言語{\it SFRP}を設計した。
+本章では、まず\ref{sec:language:model}節において、SFRPがどのような計算モデルに従うプログラミング言語であるのかを説明する。
+続く\ref{sec:language:syntax}節では、SFRPの構文と言語仕様について示す。
+最後に\ref{sec:language:memory}節において、SFRPの実行時に必要とされるメモリ使用量を評価する手法を提示する。
 
-\section{言語の構文と意味}
-\subsection{外部ノード定義}
-\subsection{内部ノード定義}
-\subsection{ノード出力定義}
-\subsection{関数定義}
-\subsection{外部関数定義}
-\subsection{式}
+\section{SFRPの計算モデル}\label{sec:language:model}
+\input{tex/chapters/03.language/model}
 
-\section{メモリ使用量の評価}
+\section{SFRPの構文と言語仕様}\label{sec:language:syntax}
+\input{tex/chapters/03.language/syntax}
+
+\section{メモリ使用量の評価}\label{sec:language:memory}
+\input{tex/chapters/03.language/memory}

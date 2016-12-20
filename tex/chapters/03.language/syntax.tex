@@ -1,0 +1,238 @@
+\subsection{外部ノードの定義}
+トップレベルに名前付きで定義されるプリミティブな時変値を外部ノード(入力ノード)と呼ぶ。
+これは、\ref{sec:language:model}節で述べた${\it input}(t)$に相当する。
+
+外部ノードを定義するために用いるのが、外部ノード定義構文である。
+外部ノード定義構文では、入力値を取得する関数の名前(および引数の式)と共に外部ノードが定義される。
+以下は入力関数\texttt{\$getInput()}によって値が供給される外部ノード\texttt{@input}を定義する例である。
+\begin{lstlisting}[basicstyle=\ttfamily\small,language=SFRP]
+in @input from $getInput()
+\end{lstlisting}
+ノードの名前は\texttt{@}から開始されなければならないことに注意されたい。
+
+以下のように初期値を設定することもできる。
+ただし、初期値の定義式において他の時変値を参照することはできない
+\footnote[1]{
+\ref{sec:language:model}節で示した計算モデルにはない非本質的な制約であり、
+将来的にはこの制約が必要ない形に言語仕様が変更される可能性がある。
+}。
+\begin{lstlisting}[basicstyle=\ttfamily\small,language=SFRP]
+in @input init 0 from $getInput()
+\end{lstlisting}
+
+\ref{sec:language:model}節では入力時変値が一つであるとして述べたが、
+プログラム中に複数の外部ノードを定義することも可能である。
+\begin{lstlisting}[basicstyle=\ttfamily\small,language=SFRP]
+in @input1 from $getInput1()
+in @input2 from $getInput2(@input1)
+\end{lstlisting}
+
+\subsection{内部ノードの定義}
+トップレベルに名前付きで定義されたプリミティブでない時変値を内部ノードと呼ぶ。
+この内部ノードを定義するために用いるのが、内部ノード定義構文である。
+以下は内部ノード定義構文の使用例である。
+外部ノードの場合と同様に、初期値の定義式において他の時変値を参照することはできない。
+\begin{lstlisting}[basicstyle=\ttfamily\small,language=SFRP]
+@a = 0
+@b = @a + 1
+@c init 0 = @b + @@c
+\end{lstlisting}
+
+これら3つの内部ノード定義は、それぞれ以下の時変値定義に相当する。
+\begin{equation*}
+  a(t) := 0
+\end{equation*}
+
+\begin{equation*}
+  b(t) := a(t) + 1
+\end{equation*}
+
+\begin{equation*}
+  c(t) := \begin{cases}
+    b(t) + c(t-\Delta t(t)) & (t \geq 0) \\
+    0 & (t < 0)
+  \end{cases}
+\end{equation*}
+
+直前値の参照が許されているのは、初期値が定義されたノードのみであることに注意されたい \footnotemark[1]。
+
+\subsection{ノード出力の定義}
+ノードを用いて出力を定義するために用いるのが、ノード出力定義構文である。
+ノード出力定義構文では、値を出力する関数の名前(および引数の式)が定義される。
+以下は出力定義構文の使用例である。
+\begin{lstlisting}[basicstyle=\ttfamily\small,language=SFRP]
+out $setOutput(@foo, @bar + 1)
+\end{lstlisting}
+
+\ref{sec:language:model}節においては出力値は${\it output}(t)$なる時変値として表現されると述べた。
+ノード出力定義構文においては、そのように出力時変値を単一の値としてまとめる必要はなく、複数の時変値を出力関数に与える形で出力を定義することができる。
+
+また、ノード出力は複数定義することができる。
+\begin{lstlisting}[basicstyle=\ttfamily\small,language=SFRP]
+out $setOutput1(@foo)
+out $setOutput2(@bar)
+\end{lstlisting}
+
+\subsection{関数の定義}
+トップレベルに名前付きの関数を定義するために用いるのが、関数定義構文である。
+定義式内においてノードを参照することはできない \footnotemark[1]。
+以下は関数定義構文の使用例である。
+\begin{lstlisting}[basicstyle=\ttfamily\small,language=SFRP]
+sum(a, b) = a + b
+\end{lstlisting}
+
+副作用を含む関数(I/O関数)を定義する場合、その関数の名前は\texttt{\$}から開始されなければならない。
+\begin{lstlisting}[basicstyle=\ttfamily\small,language=SFRP]
+$setOutputDouble(x) = $setOutput(x * 2)
+\end{lstlisting}
+
+また、I/O関数を使用することができるのは、以下の3つの場合のみである。
+\begin{itemize}
+  \item 他のI/O関数の定義式内において関数呼び出しを行う場合
+  \item 外部ノード定義構文において指定する場合
+  \item ノード出力定義構文において指定する場合
+\end{itemize}
+
+通常関数・I/O関数共に、再帰的な関数を定義することは認められていない。
+これは、省メモリ実行性およびリアルタイム性の達成の観点から課される制約である。
+
+\subsection{演算子の定義}
+演算子を定義するために用いるのが、演算子定義構文である。
+以下は、左辺の値を無視して右辺の値を取る演算子\texttt{>->}を定義する例である。
+\begin{lstlisting}[basicstyle=\ttfamily\small,language=SFRP]
+op >->(a, b) = b
+\end{lstlisting}
+
+\texttt{infix}構文を用いて演算子の結合性および優先順位を定義することができる。
+\begin{lstlisting}[basicstyle=\ttfamily\small,language=SFRP]
+infixl >-> 0
+infixr >-> 0
+infix >-> 0
+\end{lstlisting}
+それぞれ左結合、右結合、非結合を指定する文である。当然ならが一つの演算子に対して一つの指定のみが認められる。
+
+\subsection{外部関数の定義}
+C言語によって定義された外部関数をSFRPプログラム内で使用するために用いるのが、外部関数定義構文である。
+以下は、c言語で定義された関数\texttt{func\_in\_c}を、SFRPにおいて関数\texttt{funcInSFRP}として定義する例である。
+\begin{lstlisting}[basicstyle=\ttfamily\small,language=SFRP]
+foreign func_in_c as funcInSFRP(Int, Int) : Int
+\end{lstlisting}
+ここでは、関数\texttt{funcInSFRP}は\texttt{Int}型の引数を2つ取って\texttt{Int}型の値を返す関数として定義されている。
+また、C言語で定義された関数が副作用を含む場合、SFRPにおける関数名は\texttt{\$}から開始されなければならない。
+
+C言語のオペレータを外部関数(演算子)として定義することも可能である。
+\begin{lstlisting}[basicstyle=\ttfamily\small,language=SFRP]
+foreign + as +(Int, Int) : Int
+\end{lstlisting}
+
+\subsection{外部ファイルのimport}
+外部ファイルをインポートするために用いるのが、import構文である。
+以下はSFRPの標準ライブラリをインポートする例である。
+\begin{lstlisting}[basicstyle=\ttfamily\small,language=SFRP]
+import Base
+\end{lstlisting}
+この例では、標準ライブラリにて定義された関数等の名前がそのまま現在のファイルにおいて使用可能となる。
+
+以下のように修飾名を指定して外部ファイルをインポートすることもできる。
+\begin{lstlisting}[basicstyle=\ttfamily\small,language=SFRP]
+import Base.STDIO as IO
+\end{lstlisting}
+この場合、\texttt{Base.STDIO}にて定義された名前は、\texttt{IO.}をプレフィックスに付けて参照することができる。
+
+\subsection{代数的データ構造の定義}
+多相的な代数的データ構造を定義するために用いるのが、type構文である。
+以下は典型的な3種類の代数的データ構造を定義する例である。
+\begin{lstlisting}[basicstyle=\ttfamily\small,language=SFRP]
+type Bool = False | True
+type Tuple2[a, b] = Tuple2(a, b)
+type Maybe[a] = Nothing | Just(a)
+\end{lstlisting}
+
+再帰的なデータ構造の定義は認められていない。
+すなわち、以下のようなデータ構造を定義することはできない。
+\begin{lstlisting}[basicstyle=\ttfamily\small,language=SFRP]
+type List(a) = Empty | Cons(a, List(a))
+\end{lstlisting}
+これは省メモリ実行性を実現するための制約であり、\ref{sec:language:model}節における計算モデルと直接関係はない。
+
+\subsection{型システムと型アノテーション}
+SFRPはMLに近い形式の多相的な型システムを採用する。
+多相性が認められるのは代数的データ構造定義および関数定義のレベルにおいてのみであり、局所変数およびノードの多相性は認められていない。
+すなわち、以下のような記述は型エラーとなる。
+\begin{lstlisting}[basicstyle=\ttfamily\small,language=SFRP]
+@x : (Maybe[Int], Maybe[Bool]) = (x, x) where x = Nothing
+\end{lstlisting}
+
+関数定義、演算子定義、ノード定義には型アノテーションを付記することができる。
+以下はそれぞれの記述例である。
+\begin{lstlisting}[basicstyle=\ttfamily\small,language=SFRP]
+fromMaybe(x : a, m : Maybe[a]) : a =
+  case m of
+    Nothing -> x
+    Just(x) -> x
+
+op >->(x : a, y : b) : b = y
+
+@a : Int = 0
+@b init 0 : Int = @@b + 1
+\end{lstlisting}
+
+ただし型アノテーションに型変数を用いる場合、全称束縛ではなく存在束縛となる。
+すなわち、以下のような記述は型エラーとはならない。
+\begin{lstlisting}[basicstyle=\ttfamily\small,language=SFRP]
+@x : a = 0
+\end{lstlisting}
+
+
+\subsection{式}
+SFRPにおいて利用可能な式の種類を示す。
+\begin{itemize}
+\item let式\\局所変数を導入することができる。代入群はオフサイドルールによってブロック化される。
+左辺にはパターンを置くことができる。
+\begin{lstlisting}[basicstyle=\ttfamily\small,language=SFRP]
+let x = 0
+    (y,z) = (1, 2) in
+  x + y + z
+\end{lstlisting}
+where節を用いて他の代入節(\texttt{=<exp>}の形をとる節)に付加する形でも局所変数を導入することができる。
+代入群はオフサイドルールによってブロック化される。
+\begin{lstlisting}[basicstyle=\ttfamily\small,language=SFRP]
+@a = x + y where
+  x = 1
+  y = 2
+\end{lstlisting}
+
+\item case式\\パターンマッチを行うことができる。パターン群はオフサイドルールによってブロック化される。
+パターン群の網羅性がチェックされ、非網羅的である場合は不正な式とみなされる。
+必ずマッチするパターンとして変数あるいはアンダースコア\texttt{\_}を用いることができる。
+\begin{lstlisting}[basicstyle=\ttfamily\small,language=SFRP]
+case x of
+  Nothing -> (0, Nothing)
+  Just(a) as b -> (a, b)
+\end{lstlisting}
+
+\item if式
+\begin{lstlisting}[basicstyle=\ttfamily\small,language=SFRP]
+if x == 1 then x else y
+\end{lstlisting}
+
+\item 関数・演算子の適用式
+\begin{lstlisting}[basicstyle=\ttfamily\small,language=SFRP]
+f(1 + 1)
+\end{lstlisting}
+
+\item 代数的データ構造のコンストラクタの呼び出し式\\
+タプルの糖衣構文がサポートされる。
+たとえば、\texttt{(1,2)}は\texttt{Tuple2(1,2)}の別表記である。
+\begin{lstlisting}[basicstyle=\ttfamily\small,language=SFRP]
+Just(1)
+(1, 2)
+\end{lstlisting}
+
+\item 局所変数、ノードの現在値・直前値の参照式
+\begin{lstlisting}[basicstyle=\ttfamily\small,language=SFRP]
+foo
+@bar
+@@bar
+\end{lstlisting}
+\end{itemize}

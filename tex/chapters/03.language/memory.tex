@@ -1,0 +1,136 @@
+組込みシステム開発では多くの場合、プログラムが消費するメモリ使用量を何らかの形で見積もる必要がある。
+メモリ不足によってプログラムが異常終了する可能性は極力排除しなければならないためである。
+
+SFRPではこの見積もりを容易にするため、全てのデータ構造の実体を静的領域に確保できるように設計されている。
+すなわち、データ構造をコールスタックに積んだり、ヒープ上に動的確保したりせずとも実行できるように設計されている。
+
+データ構造の実体を静的領域に確保するためには、同時に使用されるデータ構造の最大量が静的に特定可能でなければならない。
+SFRPは再帰的なデータ構造と関数を排除することによって、この最大量を静的に計算可能としている。
+
+図\ref{fig:memory-eval}に示すのは、SFRPプログラムによって同時に使用されるデータ構造の最大量を評価する式である。
+図における値$memory$がこの最大量を表す。
+
+ただしこの評価はデータ構造の確保に必要なメモリ量についてのみを対象としており、
+プログラムの実行に必要な全体のメモリ量についての評価ではないことに注意されたい。
+すなわち、局所変数の使用や(非再帰的な)関数呼び出しに必要なメモリ量はまた別に存在する。
+ただしこちらのメモリ使用量についても、SFRPにおいては関数呼び出しが非再帰的であるため、理論上はその最大量を求めることができる
+\footnote{
+現状のSFRP実装ではバイナリを直接生成しないため、こちらの上限値の評価を具体的に行うことは難しい。
+}。
+
+
+\begin{figure}[p]
+\begin{framed}
+  プログラムにおけるデータ構造のメモリ使用量 \vspace{10pt}
+
+  \begin{math}
+    memory \ := \
+    \sum_{T \ \in \ EmergedTypes} memorysize(T) * whole_T
+  \end{math}
+  \vspace{25pt}
+
+  プログラムにおけるデータ構造Tの使用量 \vspace{10pt}
+
+  \begin{math}
+    whole_T \ := \
+    \max \{init_T, cycle_T\}
+  \end{math}
+  \vspace{10pt}
+
+  \begin{math}
+    init_T \ := \
+    \sum_{n \ \in \ InitializedNodes} \llbracket initexp(n) \rrbracket _T
+  \end{math}
+  \vspace{10pt}
+
+  \begin{math}
+    cycle_T \ := \
+    \sum_{n \ \in \ InitializedNodes} \llbracket type(n) \rrbracket _T
+    \ + \
+    \sum_{n \ \in \ InnerNodes} \llbracket exp(n) \rrbracket _T
+  \end{math}
+  \vspace{25pt}
+
+  式におけるデータ構造Tの使用量 \vspace{10pt}
+
+  \begin{math}
+    \llbracket \texttt{let} \ p_1 = e_1 \ ; \ \cdots \ ; \ p_n = e_n \ \texttt{in} \ e\rrbracket _T
+    \ \rightarrow \
+    \llbracket e \rrbracket _T + \sum^n_{i=1} \llbracket e_i \rrbracket _T
+  \end{math}
+  \vspace{10pt}
+
+  \begin{math}
+    \llbracket \texttt{case} \ e \ \texttt{of} \ p_1 \rightarrow e_1 \
+    ; \ \cdots \ ; \ p_n \rightarrow e_n \rrbracket _T
+    \ \rightarrow \
+    \llbracket e \rrbracket _T + \max \{ \llbracket e_i \rrbracket _T, i = 1, \cdots, n \}
+  \end{math}
+  \vspace{10pt}
+
+  \begin{math}
+    \llbracket \texttt{if} \ e_1 \ \texttt{then} \ e_2 \ \texttt{else} \ e_3 \rrbracket _T
+    \ \rightarrow \
+    \llbracket e_1 \rrbracket _T + \max \{ \llbracket e_2 \rrbracket _T, \llbracket e_3 \rrbracket _T \}
+  \end{math}
+  \vspace{10pt}
+
+  \begin{math}
+    \llbracket function(e_1, \cdots, e_n) \rrbracket _T
+    \ \rightarrow \
+    \llbracket body(function) \rrbracket _T + \sum^n_{i=1} \llbracket e_i \rrbracket _T
+  \end{math}
+  \vspace{10pt}
+
+  \begin{math}
+    \llbracket constructor(e_1, \cdots, e_n) \rrbracket _T
+    \ \rightarrow \
+    \sum^n_{i=1} \llbracket e_i \rrbracket _T +
+    \begin{cases}
+      1 & (type(constructor) \ = \ T) \\
+      0 & (type(constructor) \ \neq \ T)
+    \end{cases}
+  \end{math}
+  \vspace{10pt}
+
+  \begin{math}
+    \llbracket \texttt{foo} \rrbracket _T \ \rightarrow \ 0
+  \end{math}
+  \vspace{10pt}
+
+  \begin{math}
+    \llbracket \texttt{@bar} \rrbracket _T \ \rightarrow \ 0
+  \end{math}
+  \vspace{10pt}
+
+  \begin{math}
+    \llbracket \texttt{@@bar} \rrbracket _T \ \rightarrow \ 0
+  \end{math}
+  \vspace{25pt}
+
+  型におけるデータ構造Tの使用量 \vspace{10pt}
+
+  \begin{math}
+    \llbracket
+      type
+    \rrbracket _T
+    \ \rightarrow \
+    \begin{cases}
+      1 & (type \ = \ T) \\
+      \max \{ \llbracket c \rrbracket, \ c \ \in \ constructors(type) \} & (type \ \neq \ T)
+    \end{cases}
+  \end{math}
+  \vspace{10pt}
+
+  \begin{math}
+    \llbracket
+      constructor(type_1, \ \cdots, type_n)
+    \rrbracket _T
+    \ \rightarrow \
+    \sum^n_{i=1} \llbracket type_i \rrbracket _T
+  \end{math}
+  \vspace{10pt}
+\end{framed}
+\caption{プログラムがデータ構造を確保するために必要なメモリ量の評価}
+\label{fig:memory-eval}
+\end{figure}
