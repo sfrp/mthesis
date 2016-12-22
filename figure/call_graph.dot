@@ -1,0 +1,23 @@
+digraph call_graph {
+  main      [label = "main : 6"];
+  mark      [label = "参照到達性判定 : 0"];
+  led       [label = "@ledの計算 : 0"];
+  led_init  [label = "@ledの初期値の計算 : 0"];
+  output    [label = "ノード出力 : 0"];
+  io        [label = "I/O関数(ネイティブ関数) : 0"];
+  const_on  [label = "コンストラクタ(On) : 2"];
+  const_off [label = "コンストラクタ(Off) : 2"];
+  alloc     [label = "メモリ確保(Blink) : 0"];
+
+  main -> mark;
+  main -> alloc;
+  main -> led;
+  led -> const_on;
+  const_on -> alloc;
+  led -> const_off;
+  const_off -> alloc;
+  main -> led_init;
+  led_init -> const_off;
+  main -> output;
+  output -> io;
+}

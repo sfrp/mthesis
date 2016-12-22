@@ -1,0 +1,21 @@
+task :default do
+  sh "bundle exec sfrp BlinkLED --build='avr-gcc -Os -mmcu=atmega8 -fdata-sections -ffunction-sections -Wl,--gc-sections'"
+  sh 'avr-size BlinkLED'
+end
+
+task :stack do
+  sh "bundle exec sfrp BlinkLED --build='avr-gcc -Os -fstack-usage -mmcu=atmega8 -fdata-sections -ffunction-sections -Wl,--gc-sections'"
+  sh 'avr-size BlinkLED'
+end
+
+task :size do
+  sh 'avr-size BlinkLED'
+end
+
+task :install => :default do
+  sh "sudo avrdude -c avrispmkII -P usb -p m8 -U flash:w:BlinkLED:e -v"
+end
+
+task :clean do
+  sh 'rm -rf ./BlinkLED ./output ./*.su'
+end

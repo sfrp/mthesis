@@ -1,0 +1,5 @@
+task :default => ['call_graph.pdf']
+
+rule '.pdf' => '.dot' do |t|
+  sh "dot -Tpdf -o #{t.name} #{t.source}"
+end

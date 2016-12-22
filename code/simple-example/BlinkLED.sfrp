@@ -1,0 +1,13 @@
+import Base
+import Base.AVR.ATMEGA8.GPIO as IO
+
+type Blink = On(Int) | Off(Int)
+
+@led init Off(10000) : Blink =
+  case @@led of
+    On(0) -> Off(10000)
+    On(x) -> On(x-1)
+    Off(0) -> On(10000)
+    Off(x) -> Off(x-1)
+
+out IO.$portD(7, case @led of On(_) -> True; _ -> False)
