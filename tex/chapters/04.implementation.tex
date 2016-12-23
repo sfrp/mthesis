@@ -38,7 +38,7 @@ SFRPコンパイラによって、BLINKLEDは以下の繰り返し処理とし�
 \end{enumerate}
 \end{screen}
 \caption{BLINKLEDの実行処理}
-\label{fig:exec}
+\label{fig:imp:exec}
 \end{figure}
 
 \section{式や関数の表現}
@@ -49,7 +49,7 @@ let式で導入される局所変数はその式が所属する関数の局所�
 
 \section{データ構造の確保と取り扱い}
 SFRPコンパイラはデータ構造の実体を静的領域に確保し、実行時にはポインタを介してデータ構造を参照する。
-ノードの現在値演算が一巡する毎(図\ref{fig:exec}の第5項目を実行する毎)に全データ構造の参照到達性が調べられ、使用されていないデータ構造は再利用される。
+ノードの現在値演算が一巡する毎(図\ref{fig:imp:exec}の第5項目を実行する毎)に全データ構造の参照到達性が調べられ、使用されていないデータ構造は再利用される。
 このとき、初期値付きノードの現在値がルートとなって参照到達性の判定が行われる。
 
 静的表域に確保するされるデータ構造の実体の必要数は図\ref{fig:memory-eval}の評価によって求めることができる。
@@ -67,21 +67,21 @@ avr-gcc(v4.9.2)を用いてバイナリ(実行形式)を生成し、この実行
 \end{lstlisting}
 2つ目以降のオプションは不要な関数定義をバイナリに含めないようにするための指定である。
 
-SFRPコンパイラが出力したC言語コードを元に関数コールグラフを作成すると図\ref{fig:call-graph}に示す通りとなる。
+SFRPコンパイラが出力したC言語コードを元に関数コールグラフを作成すると図\ref{fig:imp:call_graph}に示す通りとなる。
 ただし関数名の右横の数字はその関数で導入される局所変数のバイトサイズである。
 このサイズはgccにオプション\texttt{-fstack-usage}を指定することで求めることができる。
 1回の関数呼び出しで消費するスタック領域を
 \begin{center}
 $スタックポインタを格納する2バイト領域 + 局所変数を格納する領域$
 \end{center}
-であると仮定すると、図\ref{fig:call-graph}より最大スタックサイズは
+であると仮定すると、図\ref{fig:imp:call_graph}より最大スタックサイズは
 \begin{center}
 $ (2 + 6) + (2 + 0) + (2 + 2) + (2 + 0) = 16 byte$\\
 \end{center}
 であると算出される。
 
 プログラムサイズおよび静的領域の使用量についてはavr-sizeコマンドによってそのまま求めることができる。
-以上を纏めると表\ref{fig:size}に示す通りとなり、
+以上を纏めると表\ref{fig:imp:size}に示す通りとなり、
 BLINKLEDのFlushの使用量は$486byte$、RAMの最大使用量は$24byte$であると算出される。
 
 \begin{figure}[h]
@@ -89,7 +89,7 @@ BLINKLEDのFlushの使用量は$486byte$、RAMの最大使用量は$24byte$で�
   \includegraphics[width=160mm]{figure/call_graph.pdf}
  \end{center}
  \caption{BLINKLEDをコンパイルした結果の関数コールグラフ}
- \label{fig:call-graph}
+ \label{fig:imp:call_graph}
 \end{figure}
 
 \begin{table}[h]
@@ -101,14 +101,14 @@ BLINKLEDのFlushの使用量は$486byte$、RAMの最大使用量は$24byte$で�
     最大スタックサイズ(-fstack-usageオプションおよび手計算により算出)  & 16 byte \\ \hline
   \end{tabular}
 \caption{BLINKLEDのメモリ使用量}
-\label{fig:size}
+\label{fig:imp:size}
 \end{table}
 
 
 \subsection{速度性能}
 メモリ性能の評価と同じ条件で実行形式を生成し、ATmega8実機上で実際にプログラムを動かして実行速度を計測する。
 実行速度はLEDの明滅切り替え(すなわち、出力のHigh/Lowの切り替え)の間隔を測定することによって求める。
-この測定を、実時間計測が可能なもう1つのマイクロコントローラを接続することによって行ったところ、結果は表\ref{fig:time1}の通りとなった。
+この測定を、実時間計測が可能なもう1つのマイクロコントローラを接続することによって行ったところ、結果は表\ref{fig:imp:time1}の通りとなった。
 
 \begin{table}[h]
   \centering
@@ -116,11 +116,11 @@ BLINKLEDのFlushの使用量は$486byte$、RAMの最大使用量は$24byte$で�
     $ \input{code/simple-example/evaluator/result1.txt}ms$ \\ \hline
   \end{tabular}
 \caption{BLINKLEDのLED明滅が切り替わる時間の間隔(20回平均)}
-\label{fig:time1}
+\label{fig:imp:time1}
 \end{table}
 
 プログラムBLINKLEDにおいて10000回のイテレーションを経てLEDの明滅が切り替わることから、
-イテレーション1回(図\ref{fig:exec}の一巡)に対して平均
+イテレーション1回(図\ref{fig:imp:exec}の一巡)に対して平均
 $ \input{code/simple-example/evaluator/result2.txt} \mu s$
 の計算時間を要していることがわかる。
 
