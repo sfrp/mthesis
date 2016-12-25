@@ -1,27 +1,25 @@
+CC_FLAGS = '-Os -mmcu=atmega8 -fdata-sections -ffunction-sections -Wl,--gc-sections'
+SIZE_FLAGS = '--format=avr --mcu=atmega8'
+
+desc 'コンパイル. -fstack-usageは有り.'
 task :default do
-  sh "bundle exec sfrp BlinkLED --build='avr-gcc -Os -mmcu=atmega8 -fdata-sections -ffunction-sections -Wl,--gc-sections'"
-  sh 'avr-size BlinkLED'
+  sh "bundle exec sfrp BlinkLED --build='avr-gcc -fstack-usage #{CC_FLAGS}'"
+  sh "avr-size #{SIZE_FLAGS} BlinkLED"
 end
 
-task :stack do
-  sh "bundle exec sfrp BlinkLED --build='avr-gcc -Os -fstack-usage -mmcu=atmega8 -fdata-sections -ffunction-sections -Wl,--gc-sections'"
-  sh 'avr-size BlinkLED'
-end
-
-task :size do
-  sh 'avr-size BlinkLED'
-end
-
+desc 'インストール'
 task :install => :default do
   sh "sudo avrdude -c avrispmkII -P usb -p m8 -U flash:w:BlinkLED:e -v"
 end
 
+desc '掃除'
 task :clean do
-  sh 'rm -rf ./BlinkLED ./output ./*.su'
+  sh 'rm -rf ./BlinkLED ./KTimerBench ./KTimerBench.sfrp ./output ./*.su'
 end
 
-task :eval do
+desc 'log解析して評価値を出す'
+task 'eval' do
   cd 'evaluation' do
-    sh 'ruby ../../evaluator/eval.rb < log.txt'
+    sh 'ruby ../../evaluator/eval.rb < ./log.txt'
   end
 end
