@@ -19,3 +19,9 @@ end
 task :clean do
   sh 'rm -rf ./BlinkLED ./output ./*.su'
 end
+
+task :eval do
+  cd 'evaluation' do
+    sh 'ruby ../../evaluator/eval.rb < log.txt'
+  end
+end
