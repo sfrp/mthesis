@@ -76,13 +76,13 @@ $スタックポインタを格納する2バイト領域 + 局所変数を格納
 \end{center}
 であると仮定すると、図\ref{fig:imp:call_graph}より最大スタックサイズは
 \begin{center}
-$ (2 + 6) + (2 + 0) + (2 + 2) + (2 + 0) = 16 byte$\\
+$(2 + 6) + (2 + 0) + (2 + 2) + (2 + 0) =$ 16 byte\\
 \end{center}
 であると算出される。
 
 プログラムサイズおよび静的領域の使用量についてはavr-sizeコマンドによってそのまま求めることができる。
 以上を纏めると表\ref{fig:imp:size}に示す通りとなり、
-BLINKLEDのFlushの使用量は$486byte$、RAMの最大使用量は$24byte$であると算出される。
+BLINKLEDのFlushの使用量は486byte、RAMの最大使用量は$8+16=$24byteであると算出される。
 
 \begin{figure}[h]
  \begin{center}
@@ -95,9 +95,8 @@ BLINKLEDのFlushの使用量は$486byte$、RAMの最大使用量は$24byte$で�
 \begin{table}[h]
   \centering
   \begin{tabular}{l|r}
-    textサイズ(avr-sizeコマンドより) & 486 byte \\ \hline
-    dataサイズ(avr-sizeコマンドより) & 0 byte \\ \hline
-    bssサイズ(avr-sizeコマンドより)  & 8 byte \\ \hline
+    Programサイズ(avr-sizeコマンドより) & 486 byte \\ \hline
+    Dataサイズ(avr-sizeコマンドより) & 8 byte \\ \hline
     最大スタックサイズ(-fstack-usageオプションおよび手計算により算出)  & 16 byte \\ \hline
   \end{tabular}
 \caption{BLINKLEDのメモリ使用量}
