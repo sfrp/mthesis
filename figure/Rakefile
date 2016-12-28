@@ -1,4 +1,6 @@
-task :default => ['call_graph.pdf']
+task :default => [
+  'call_graph.pdf', 'ktimer_state.pdf', 'call_graph_ktimer.pdf'
+]
 
 rule '.pdf' => '.dot' do |t|
   sh "dot -Tpdf -o #{t.name} #{t.source}"

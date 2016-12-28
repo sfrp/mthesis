@@ -1,0 +1,57 @@
+digraph ktimer_state {
+  graph [
+    layout = neato
+  ];
+  node [shape=record];
+  start [
+    style = invisible
+    pos = "1,6!"
+  ];
+  wait [
+    label = "{<head> 一時停止状態|<middle> min\lsec\l|<tail>時間[min, sec]を表示}"
+    pos = "3,5!"
+  ];
+  cd [
+    label = "{<head> カウントダウン状態|min'\lsec'\l|<tail>時間[min', sec']を表示}"
+    pos = "9,5!"
+  ];
+  beep [
+    label = "{<head> アラーム状態||<tail>時間[0, 0]を表示\nアラームを鳴らす}"
+    pos = "6,2!"
+  ];
+
+  // From start
+  start -> wait:head [
+    label = "[電源投入]\nmin := 0, sec := 0"
+  ];
+
+  // From wait
+  wait:head -> cd:head [
+    label = "[ボタンCが押される]\n[!(min == 0 && sec == 0)]\nmin':= min, sec' := sec"
+  ];
+  wait:head-> wait:head [
+    label = "[ボタンAが押される]\nmin := (min+1)%100, sec := sec"
+  ];
+  wait:middle -> wait:middle [
+    label = "[ボタンAとBが押される]\nmin := 0, sec := 0"
+  ];
+  wait:tail -> wait:tail [
+    label = "[ボタンBが押される]\nmin := min, sec := (sec+1)%60"
+  ];
+
+  // From cd
+  cd:tail -> wait:tail [
+    label = "[ボタンCが押される]\nmin := min', sec := sec'"
+  ];
+  cd:tail -> cd:tail [
+    label = "[1秒経過]\nmin' := (min'*60+sec'-1)/60,\nsec' := (min'*60+sec'-1)%60"
+  ];
+  cd -> beep [
+    label = "[min' == 0 && sec' == 0]"
+  ];
+
+  // From beep
+  beep -> wait [
+    label = "[ボタンCが押される]\nmin := 0, sec := 0"
+  ];
+}

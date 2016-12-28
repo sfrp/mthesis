@@ -1,0 +1,44 @@
+CC_FLAGS = '-Os -mmcu=atmega8 -fdata-sections -ffunction-sections -Wl,--gc-sections'
+SIZE_FLAGS = '--format=avr --mcu=atmega8'
+
+desc '普通にコンパイル. -fstack-usageは有り.'
+task :default do
+  sh "bundle exec sfrp KTIMER --build='avr-gcc -fstack-usage #{CC_FLAGS}'"
+  sh "avr-size #{SIZE_FLAGS} KTIMER"
+end
+
+desc 'ベンチ処理を追加してコンパイル. -fstack-usageは無し.'
+task :bench do
+  File.write('KTIMERBench.sfrp', File.read('KTIMER.sfrp') + File.read('bench.sfrp'))
+  sh "bundle exec sfrp KTIMERBench --build='avr-gcc #{CC_FLAGS}'"
+  sh "avr-size #{SIZE_FLAGS} KTIMERBench"
+end
+
+desc '普通にインストール'
+task :install => :default do
+  sh "sudo avrdude -c avrispmkII -P usb -p m8 -U flash:w:KTIMER:e -v"
+end
+
+desc 'ベンチ処理を追加してインストール'
+task 'bench-install' => :bench do
+  sh "sudo avrdude -c avrispmkII -P usb -p m8 -U flash:w:KTIMERBench:e -v"
+end
+
+desc '掃除'
+task :clean do
+  sh 'rm -rf ./KTIMER ./KTIMERBench ./KTIMERBench.sfrp ./output ./*.su'
+end
+
+desc 'log_waitを解析して評価値を出す'
+task 'eval-wait' do
+  cd 'evaluation_wait' do
+    sh 'ruby ../../evaluator/eval.rb < ./log.txt'
+  end
+end
+
+desc 'log_tickを解析して評価値を出す'
+task 'eval-tick' do
+  cd 'evaluation_tick' do
+    sh 'ruby ../../evaluator/eval.rb < ./log.txt'
+  end
+end

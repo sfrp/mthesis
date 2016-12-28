@@ -1,0 +1,14 @@
+digraph call_graph {
+  main      [label = "main : 6"];
+  state     [label = "@stateの計算 : 8"];
+  cd        [label = "countdown関数 : 0"];
+  const_time [label = "コンストラクタ(Time) : 4"];
+  alloc_time [label = "メモリ確保(Time) : 0"];
+  interrupt  [label = "タイマー割り込み : 5"];
+
+  main -> state;
+  state -> cd;
+  cd -> const_time;
+  const_time -> alloc_time;
+  alloc_time -> interrupt;
+}

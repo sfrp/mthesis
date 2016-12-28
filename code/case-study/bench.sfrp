@@ -1,0 +1,2 @@
+@counter init 0 = (@@counter + 1) % 20000
+out IO.$portB(7, @counter < 10000)
