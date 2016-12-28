@@ -1,10 +1,10 @@
-\chapter{実装}
+\chapter{実装}\label{sec:implementation}
 本研究ではリファレンス実装として、C言語を中間表現とするSFRPのコンパイラ
 \footnote{https://github.com/sfrp/sfrp}を作成した。
 以降ではこの実装をSFRPコンパイラと呼称する。
 本章では、SFRPコンパイラによってプログラムがどのように実行されるのかを説明する。
 
-\section{SFRPプログラム例}
+\section{SFRPプログラム例}\label{sec:implementation:example}
 以降の節では、Code \ref{code:sample}に示す簡単なSFRPのプログラムBLINKLEDを例にとって解説および評価を行う。
 このプログラムは、接続されたLEDの明滅を一定周期で切り替えるシステムを記述したものである。
 
@@ -18,7 +18,7 @@
 \lstinputlisting[language=SFRP,tabsize=2,caption={SFRPの例題プログラム(BLINKLED)},label={code:sample}]{./code/simple-example/BlinkLED.sfrp}
 
 
-\section{実行過程}
+\section{実行過程}\label{sec:implementation:execution}
 SFRPコンパイラによって、BLINKLEDは以下の繰り返し処理として実行される。
 これは、\ref{sec:language:model:execution}項における実行モデルに基づいている。
 \begin{figure}[h]
@@ -41,13 +41,13 @@ SFRPコンパイラによって、BLINKLEDは以下の繰り返し処理とし�
 \label{fig:imp:exec}
 \end{figure}
 
-\section{式や関数の表現}
+\section{式や関数の表現}\label{sec:implementation:expression}
 SFRPの式や関数とC言語の式や関数の間にギャップはあまりないため、特に複雑な変換処理などは介さずにC言語へとコンパイルされる。
 let式で導入される局所変数はその式が所属する関数の局所変数として巻き上げられ、パターンマッチ式やif式は3項演算子へと変換される。
 関数呼び出しおよびコンストラクタ呼び出しはそのまま対応する関数の呼び出し式として表現される。
 内部ノードは関数として表現され、依存する他のノードの参照は関数のパラメータを介して行われる。
 
-\section{データ構造の確保と取り扱い}
+\section{データ構造の確保と取り扱い}\label{sec:implementation:data}
 SFRPコンパイラはデータ構造の実体を静的領域に確保し、実行時にはポインタを介してデータ構造を参照する。
 ノードの現在値演算が一巡する毎(図\ref{fig:imp:exec}の第5項目を実行する毎)に全データ構造の参照到達性が調べられ、使用されていないデータ構造は再利用される。
 このとき、初期値付きノードの現在値がルートとなって参照到達性の判定が行われる。
@@ -56,7 +56,7 @@ SFRPコンパイラはデータ構造の実体を静的領域に確保し、実�
 BLINKLEDの場合、\texttt{Blink}型のデータ構造に対して必要な実体は2つである。
 
 
-\section{実行時性能}
+\section{実行時性能}\label{sec:implementation:performance}
 本研究ではBLINKLEDの実行時性能を調査し、SFRP言語およびSFRPコンパイラの簡易的な実行性能評価とする。
 
 \subsection{メモリ性能}
@@ -69,12 +69,12 @@ avr-gcc(v4.9.2)を用いてバイナリ(実行形式)を生成し、この実行
 
 SFRPコンパイラが出力したC言語コードを元に関数コールグラフを作成すると図\ref{fig:imp:call_graph}に示す通りとなる。
 ただし関数名の右横の数字はその関数で導入される局所変数のバイトサイズである。
-このサイズはgccにオプション\texttt{-fstack-usage}を指定することで求めることができる。
+このサイズはコンパイル時のgccにオプション\texttt{-fstack-usage}を指定することで求めることができる。
 1回の関数呼び出しで消費するスタック領域を
 \begin{center}
 $スタックポインタを格納する2バイト領域 + 局所変数を格納する領域$
 \end{center}
-であると仮定すると、図\ref{fig:imp:call_graph}より最大スタックサイズは
+であると仮定すると、図\ref{fig:imp:call_graph}より最大スタック使用量は
 \begin{center}
 $(2 + 6) + (2 + 0) + (2 + 2) + (2 + 0) =$ 16 byte\\
 \end{center}
@@ -104,7 +104,7 @@ BLINKLEDのFlushの使用量は486byte、RAMの最大使用量は$8+16=$24byte�
 \end{table}
 
 
-\subsection{速度性能}
+\subsection{速度性能}\label{sec:implementation:performance:speed}
 メモリ性能の評価と同じ条件で実行形式を生成し、ATmega8実機上で実際にプログラムを動かして実行速度を計測する。
 実行速度はLEDの明滅切り替え(すなわち、出力のHigh/Lowの切り替え)の間隔を測定することによって求める。
 この測定を、実時間計測が可能なもう1つのマイクロコントローラを接続することによって行ったところ、結果は表\ref{fig:imp:time1}の通りとなった。
