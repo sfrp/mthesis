@@ -55,6 +55,38 @@ SFRPコンパイラはデータ構造の実体を静的領域に確保し、実�
 静的表域に確保するされるデータ構造の実体の必要数は図\ref{fig:memory-eval}の評価によって求めることができる。
 BLINKLEDの場合、\texttt{Blink}型のデータ構造に対して必要な実体は2つである。
 
+\section{C言語ヘッダファイルとソースファイルの読み込み}
+SFRPのソースファイルと同じ場所に同名のC言語ヘッダファイル
+\footnote{SFRPのソースファイル名が\texttt{X.sfrp}ならば\texttt{X.h}}
+が存在する場合、コンパイル結果のCコードにおいてこのヘッダファイルに対するincludeディレクティブが追記される。
+また、SFRPのソースファイルと同じ場所に同名のC言語ソースファイル
+\footnote{SFRPのソースファイル名が\texttt{X.sfrp}ならば\texttt{X.c}}
+が存在する場合、コンパイル結果にこのC言語ソースファイルが含められる。
+したがって外部関数を定義する場合、ユーザは対応するC言語関数のプロトタイプ宣言をこのC言語ヘッダファイル内に記述し、
+対応するC言語関数の定義をこのC言語ソースファイル内に記述することになる。
+
+子要素を持つ代数的データ型の値を外部関数の引数または帰り値とすることは許されない。
+\texttt{Int}型や\texttt{Bool}型は子要素を持たない代数的データ型(単純型)であり、\texttt{Maybe[a]}型
+などは子要素を持つ代数的データ型(複雑型)である。
+\texttt{Int}型や\texttt{Float}型はそのままC言語における\texttt{int}型や\texttt{float}型に
+対応付けられ、\texttt{Bool}型に代表されるような有限列挙型の代数的データ型はC言語における\texttt{int}型に対応付けられる。
+
+子要素が全て単純型であるTupleを返す外部関数を定義することに関しては例外として認められている。
+その場合、外部関数のポインタ引数を介して返り値をやり取りすることになる。
+たとえば、Int型の引数を取り2要素のタプルを返すSFRP外部関数\texttt{getTuple2}を
+C言語関数\texttt{get\_tuple2}によって定義する場合、
+SFRPプログラムの記述とC言語ソースファイルの記述はそれぞれ以下のようになる。
+\begin{lstlisting}[basicstyle=\ttfamily\small,language=SFRP]
+foreign get_tuple2 as getTuple2(Int) : (Int, Int)
+\end{lstlisting}
+\begin{lstlisting}[basicstyle=\ttfamily\small,language=C]
+int get_tuple2(int x, int* a, int* b) {
+  *a = x;
+  *b = y;
+  return 0;
+}
+\end{lstlisting}
+
 
 \section{実行時性能}\label{sec:implementation:performance}
 本研究ではBLINKLEDの実行時性能を調査し、SFRP言語およびSFRPコンパイラの簡易的な実行性能評価とする。
