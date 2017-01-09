@@ -1,6 +1,6 @@
 \chapter{実装}\label{sec:implementation}
 本研究ではリファレンス実装として、C言語を中間表現とするSFRPのコンパイラ
-\footnote{https://github.com/sfrp/sfrp}を作成した。
+\footnote{\url{https://github.com/sfrp/sfrp}}を作成した。
 以降ではこの実装をSFRPコンパイラと呼称する。
 本章では、SFRPコンパイラによってプログラムがどのように実行されるのかを説明する。
 
@@ -9,7 +9,7 @@
 このプログラムは、接続されたLEDの明滅を一定周期で切り替えるシステムを記述したものである。
 
 マイクロコントローラには8KBのFlashと1KBのRAM、16MHzの内部クロックを持つAtmel AVR 8ビットマイクロコントローラ ATmega8
-\footnote{http://www.atmel.com/ja/jp/devices/ATMEGA8.aspx}
+\footnote{\url{http://www.atmel.com/ja/jp/devices/ATMEGA8.aspx}}
 を使用し、汎用入出力ポートPD7とGNDの間にLEDを接続する。
 本来、I/O処理のインターフェースはアーキテクチャ毎に個別にユーザが定義する必要があるが、
 本マイクロコントローラATmega8についてはリファレンス実装としてI/O処理がSFRPの標準ライブラリに組み込まれている。
