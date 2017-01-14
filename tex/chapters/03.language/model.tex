@@ -30,14 +30,14 @@ SFRPプログラムは、時刻によって変動する値(時変値、time-vary
   \end{equation*}
 
   \item
-  各時変値は、時刻$t$における値(現在値)の参照と、微小時間$ \Delta t $前の値(直前値)の参照が許されている。
+  各時変値は、時刻$t$における値(現在値)の参照と、微小時間$ \Delta t(t) $前の値(直前値)の参照が許されている。
   たとえば、時変値Aの現在値と時変値Bの直前値の和を取る時変値Dを定義することができる。
   \begin{equation*}
-    D(t) := A(t) + B(t - \Delta t)
+    D(t) := A(t) + B(t - \Delta t(t))
   \end{equation*}
 
   \item
-  $ \Delta t $は定数ではなく、$t$に依存して決まるプリミティブな時変値である。
+  $ \Delta t $は微小時間を表すプリミティブな時変値である。
   \begin{equation*}
     \Delta t(t) > 0
   \end{equation*}
