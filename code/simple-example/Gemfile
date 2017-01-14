@@ -1,3 +1,3 @@
 source 'https://rubygems.org'
 
-gem 'sfrp', '1.4.0'
+gem 'sfrp', '1.5.2'

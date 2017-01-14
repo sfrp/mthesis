@@ -92,6 +92,7 @@ int get_tuple2(int x, int* a, int* b) {
 本研究ではBLINKLEDの実行時性能を調査し、SFRP言語およびSFRPコンパイラの簡易的な実行性能評価とする。
 
 \subsection{メモリ性能}
+sfrpコンパイラ(v1.5.2\footnote{\url{https://github.com/sfrp/sfrp/releases/tag/v1.5.2}})および
 avr-gcc(v4.9.2)を用いてバイナリ(実行形式)を生成し、この実行形式を分析することによってメモリ使用量の算出を行う。
 ただしコードサイズを小さくするため、以下のコンパイルオプションを指定した。
 \begin{lstlisting}[basicstyle=\ttfamily\small,numbers=none,frame=none]
