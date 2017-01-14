@@ -19,8 +19,8 @@
 
 
 \section{実行過程}\label{sec:implementation:execution}
-SFRPコンパイラによって、BLINKLEDは以下の繰り返し処理として実行される。
-これは、\ref{sec:language:model:execution}項における実行モデルに基づいている。
+SFRPコンパイラによって、BLINKLEDは以下の繰り返し処理に変換される。
+この繰り返し処理は\ref{sec:language:model:execution}項における実行モデルに基づいている。
 \begin{figure}[h]
 \begin{screen}
 \begin{enumerate}
@@ -43,9 +43,9 @@ SFRPコンパイラによって、BLINKLEDは以下の繰り返し処理とし�
 
 \section{式や関数の表現}\label{sec:implementation:expression}
 SFRPの式や関数とC言語の式や関数の間にギャップはあまりないため、特に複雑な変換処理などは介さずにC言語へとコンパイルされる。
-let式で導入される局所変数はその式が所属する関数の局所変数として巻き上げられ、パターンマッチ式やif式は3項演算子へと変換される。
+let式で導入される局所変数はその式が所属する関数の局所変数として巻き上げられ、パターンマッチ式やif式は3項演算子式へと変換される。
 関数呼び出しおよびコンストラクタ呼び出しはそのまま対応する関数の呼び出し式として表現される。
-内部ノードは関数として表現され、依存する他のノードの参照は関数のパラメータを介して行われる。
+内部ノードは関数として表現され、依存する他のノードの参照値は関数のパラメータを介して渡される。
 
 \section{データ構造の確保と取り扱い}\label{sec:implementation:data}
 SFRPコンパイラはデータ構造の実体を静的領域に確保し、実行時にはポインタを介してデータ構造を参照する。
