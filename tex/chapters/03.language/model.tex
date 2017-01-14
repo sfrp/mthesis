@@ -66,41 +66,41 @@ SFRPプログラムは、時刻によって変動する値(時変値、time-vary
 \ref{sec:language:model:program}項にて示したプログラム表現は、 以下に示す逐次的操作によって実行される。
 \begin{screen}
 \begin{enumerate}
-  \item $ {\it timestamp}^{\prime} $の値を現在時刻とする。
-  \item $ {\it timestamp} $の値を現在時刻とする。
+  \item $ {\it timestamp}^{\prime} := 現在時刻$
+  \item $ {\it timestamp} := 現在時刻 (> timestamp^{\prime})$
   \item $ {\it elapsed} := {\it timestamp} - {\it timestamp}^{\prime} $
-  \item $ {\it timestamp}^{\prime} := {\it timestamp} $
   \item $\tau$が未定義であるなら$ \tau := 0 $として、そうでないなら$ \tau := \tau + {\it elapsed} $とする。
   \item $ \Delta t(\tau) := {\it elapsed} $
   \item 入力を受け取り、$ {\it input}(\tau) $の値とする。
   \item プログラム中の全ての時変値の、$t=\tau$における値を導出する。
   \item $ {\it output}(\tau) $の値を出力する。
+  \item $ {\it timestamp}^{\prime} := {\it timestamp} $
   \item 2に戻る。
 \end{enumerate}
 \end{screen}
 
 \subsection{プログラムの実行可能性}\label{sec:language:model:validation}
-\ref{sec:language:model:execution}項の操作において実行可能性が明白でないのは、8番目の処理(処理8)である。
+\ref{sec:language:model:execution}項の操作において実行可能性が明白でないのは、7番目の処理(処理7)である。
 ただし入出力の処理は必ず成功すると仮定する。
-本項では、処理8が実行可能である(すなわちプログラムが実行可能である)ための条件について議論を行う。
+本項では、処理7が実行可能である(すなわちプログラムが実行可能である)ための条件について議論を行う。
 
-${\it output}(t)$の値の導出過程において、存在そのものが未定義な時変値が参照される場合は、当然の事ながら処理8は実行不可能である。
+${\it output}(t)$の値の導出過程において、存在そのものが未定義な時変値が参照される場合は、当然の事ながら処理7は実行不可能である。
 以下では、存在そのものが未定義な時変値への参照はプログラム中に含まれないと仮定する。
 また、時変値の参照による依存関係に循環は無いと仮定する。
 
-$t = \tau (\neq 0)$において処理8が実行される場合、
-過去の$t = \tau - \Delta t(\tau)$である場合において処理8の実行に成功しているはずである。
+$t = \tau (\neq 0)$において処理7が実行される場合、
+過去の$t = \tau - \Delta t(\tau)$である場合において処理7の実行に成功しているはずである。
 したがって、プログラム中の任意の時変値$v(t)$について、$v(\tau - \Delta t(\tau))$の値は導出可能である。
 このことから帰納的に定理1が成り立つ。
 \begin{itembox}[l]{定理1}
-  $\tau = 0$のとき処理8の実行に成功する $\Longleftrightarrow$ 常に処理8の実行に成功する
+  $\tau = 0$のとき処理7の実行に成功する $\Longleftrightarrow$ 常に処理7の実行に成功する
 \end{itembox}
 
 $\Delta t(0) > 0$であるから、$input(0-\Delta t(0))$および$\Delta t(0-\Delta t(0))$の値は未定義である。
 また、時刻$-\Delta t(0)$における値が直接的に未定義となる時変値はこの2つを除いて存在しない。
 このことから定理2が成り立つ。
 \begin{itembox}[l]{定理2}
-  $\tau = 0$のとき処理8の実行に成功する $\Longleftrightarrow$ \\
+  $\tau = 0$のとき処理7の実行に成功する $\Longleftrightarrow$ \\
   プログラム中に、${\it input}(t - \Delta t(t))$あるいは$\Delta t(t - \Delta t(t))$への参照が存在しない。
 \end{itembox}
 
