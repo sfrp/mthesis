@@ -49,7 +49,7 @@ KTIMERのハードウェア仕様を図\ref{fig:ktimer:hardware}に簡単に示�
 \begin{figure}[h]
 \begin{screen}
 \begin{itemize}
-  \item マイクロコントローラはAVR ATmega8を使用する。
+  \item マイクロコントローラにはAVR ATmega8を使用する。
   \item 時間の表示には4桁のカソードコモンの7セグメント表示器を用いてダイナミック点灯を行う。
   \item ボタンA、ボタンB、ボタンCにはそれぞれタクトスイッチを用いる。
   \item ブザーには圧電ブザーを用いる。
@@ -93,14 +93,14 @@ Code \ref{code:ktimer:sfrp}は、SFRPによって記述したKTIMERプログラ�
   \item \texttt{import Base.AVR.ATMEGA8.GPIO as IO}\\
   \texttt{Base.AVR.ATMEGA8.GPIO}はATmega8が搭載するI/Oポートにアクセスするためのライブラリである。
   ノード\texttt{@pinXn}はポートPXnの時変値であり、
-  \texttt{@posEdgePXn}はポートPXnの立ち上がり(PXnがHighになった瞬間のみTrueとなる)時変値である。
+  \texttt{@posEdgePXn}はポートPXnの立ち上がり(PXnがHighになった瞬間のみTrueとなる)を表す時変値である。
   I/O関数\texttt{\$portX(n:Int, b:Bool):Unit}はポートPXnにbを出力し、
   \texttt{\$portXs(b:Int):Unit}はポート[PX7:PX0]にbを出力する。
 
   \item \texttt{import Base.AVR.ATMEGA8.Timer as Timer}\\
   \texttt{Base.AVR.ATMEGA8.Timer}はATmega8が搭載するタイマーを利用するためのライブラリである。
   \texttt{@dsec}は前回のイテレーションからの秒単位の経過時間であり、
-  \ref{sec:language:model:program}項における$\Delta t(t)$の具体形であると言える。
+  \ref{sec:language:model:program}項における時変値$\Delta t$の具体形であると言える。
 \end{itemize}
 
 
