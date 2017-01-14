@@ -32,7 +32,7 @@ SFRPプログラムは、時刻によって変動する値(時変値、time-vary
   \item
   各時変値は、時刻$t$における値(現在値)の参照と、微小時間$ \Delta t $前の値(直前値)の参照が許されている。
   \begin{equation*}
-    C^{\prime}(t) := A(t) + B(t - \Delta t)
+    D(t) := A(t) + B(t - \Delta t)
   \end{equation*}
 
   \item
@@ -53,7 +53,7 @@ SFRPプログラムは、時刻によって変動する値(時変値、time-vary
   \item
   時刻$t$におけるプログラムの出力は、任意の時変値によって定義される。
   \begin{equation*}
-    output(t) := C^{\prime}(t)
+    output(t) := D(t)
   \end{equation*}
 \end{itemize}
 
