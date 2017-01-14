@@ -15,118 +15,118 @@ SFRPは再帰的なデータ構造と関数を排除することによって、�
 すなわち、局所変数の使用や(非再帰的な)関数呼び出しに必要なメモリ量はまた別に存在する。
 ただしこちらのメモリ使用量についても、SFRPにおいては関数呼び出しが非再帰的であるため、理論上はその最大量を求めることができるはずである。
 
-
 \begin{figure}[p]
 \begin{framed}
-  プログラムにおけるデータ構造のメモリ使用量 \vspace{10pt}
+  \begin{itemize}
+    \item プログラムにおけるデータ構造のメモリ使用量 \vspace{10pt}
+
+    \begin{math}
+      memory \ = \
+      \sum_{T \ \in \ EmergedTypes} データ構造Tのサイズ * whole_T
+    \end{math}
+
+  \item プログラムにおけるデータ構造Tの使用個数 \vspace{10pt}
 
   \begin{math}
-    memory \ := \
-    \sum_{T \ \in \ EmergedTypes} memorysize(T) * whole_T
-  \end{math}
-  \vspace{25pt}
-
-  プログラムにおけるデータ構造Tの使用量 \vspace{10pt}
-
-  \begin{math}
-    whole_T \ := \
+    whole_T \ = \
     \max \{init_T, cycle_T\}
   \end{math}
   \vspace{10pt}
 
   \begin{math}
-    init_T \ := \
-    \sum_{n \ \in \ InitializedNodes} \llbracket initexp(n) \rrbracket _T
+    init_T \ = \
+    \sum_{n \ \in \ InitializedNodes} \llbracket nの初期値定義式 \rrbracket _T
   \end{math}
   \vspace{10pt}
 
   \begin{math}
-    cycle_T \ := \
-    \sum_{n \ \in \ InitializedNodes} \llbracket type(n) \rrbracket _T
+    cycle_T \ = \
+    \sum_{n \ \in \ InitializedNodes} \llbracket nの型 \rrbracket _T
     \ + \
-    \sum_{n \ \in \ InnerNodes} \llbracket exp(n) \rrbracket _T
+    \sum_{n \ \in \ InnerNodes} \llbracket nの定義式 \rrbracket _T
   \end{math}
-  \vspace{25pt}
 
-  式におけるデータ構造Tの使用量 \vspace{10pt}
+  \item $\llbracket e \rrbracket _T $ : 式eにおけるデータ構造Tの使用個数  \vspace{10pt}
 
   \begin{math}
     \llbracket \texttt{let} \ p_1 = e_1 \ ; \ \cdots \ ; \ p_n = e_n \ \texttt{in} \ e\rrbracket _T
-    \ \rightarrow \
+    \ = \
     \llbracket e \rrbracket _T + \sum^n_{i=1} \llbracket e_i \rrbracket _T
   \end{math}
   \vspace{10pt}
 
   \begin{math}
-    \llbracket \texttt{case} \ e \ \texttt{of} \ p_1 \rightarrow e_1 \
-    ; \ \cdots \ ; \ p_n \rightarrow e_n \rrbracket _T
-    \ \rightarrow \
+    \llbracket \texttt{case} \ e \ \texttt{of} \ p_1 = e_1 \
+    ; \ \cdots \ ; \ p_n = e_n \rrbracket _T
+    \ = \
     \llbracket e \rrbracket _T + \max \{ \llbracket e_i \rrbracket _T, i = 1, \cdots, n \}
   \end{math}
   \vspace{10pt}
 
   \begin{math}
     \llbracket \texttt{if} \ e_1 \ \texttt{then} \ e_2 \ \texttt{else} \ e_3 \rrbracket _T
-    \ \rightarrow \
+    \ = \
     \llbracket e_1 \rrbracket _T + \max \{ \llbracket e_2 \rrbracket _T, \llbracket e_3 \rrbracket _T \}
   \end{math}
   \vspace{10pt}
 
   \begin{math}
     \llbracket function(e_1, \cdots, e_n) \rrbracket _T
-    \ \rightarrow \
-    \llbracket body(function) \rrbracket _T + \sum^n_{i=1} \llbracket e_i \rrbracket _T
+    \ = \
+    \llbracket functionの定義式 \rrbracket _T + \sum^n_{i=1} \llbracket e_i \rrbracket _T
   \end{math}
   \vspace{10pt}
 
   \begin{math}
     \llbracket constructor(e_1, \cdots, e_n) \rrbracket _T
-    \ \rightarrow \
+    \ = \
     \sum^n_{i=1} \llbracket e_i \rrbracket _T +
     \begin{cases}
-      1 & (type(constructor) \ = \ T) \\
-      0 & (type(constructor) \ \neq \ T)
+      1 & (constructorの型 \ = \ T) \\
+      0 & (constructorの型 \ \neq \ T)
     \end{cases}
   \end{math}
   \vspace{10pt}
 
   \begin{math}
-    \llbracket \texttt{foo} \rrbracket _T \ \rightarrow \ 0
+    \llbracket \texttt{foo} \rrbracket _T \ = \ 0
   \end{math}
   \vspace{10pt}
 
   \begin{math}
-    \llbracket \texttt{@bar} \rrbracket _T \ \rightarrow \ 0
+    \llbracket \texttt{@bar} \rrbracket _T \ = \ 0
   \end{math}
   \vspace{10pt}
 
   \begin{math}
-    \llbracket \texttt{@@bar} \rrbracket _T \ \rightarrow \ 0
+    \llbracket \texttt{@@bar} \rrbracket _T \ = \ 0
   \end{math}
-  \vspace{25pt}
 
-  型におけるデータ構造Tの使用量 \vspace{10pt}
+  \item $\llbracket t \rrbracket _T $ : 型tにおけるデータ構造Tの使用個数 \vspace{10pt}
 
   \begin{math}
     \llbracket
       type
     \rrbracket _T
-    \ \rightarrow \
+    \ = \
     \begin{cases}
       1 & (type \ = \ T) \\
-      \max \{ \llbracket c \rrbracket, \ c \ \in \ constructors(type) \} & (type \ \neq \ T)
+      \max \{ \llbracket c \rrbracket, \ c \ \in \ typeのコンストラクタ群 \} & (type \ \neq \ T)
     \end{cases}
   \end{math}
   \vspace{10pt}
+
+  \item $\llbracket c \rrbracket _T $ : コンストラクタcにおけるデータ構造Tの使用個数 \vspace{10pt}
 
   \begin{math}
     \llbracket
       constructor(type_1, \ \cdots, type_n)
     \rrbracket _T
-    \ \rightarrow \
+    \ = \
     \sum^n_{i=1} \llbracket type_i \rrbracket _T
   \end{math}
   \vspace{10pt}
+\end{itemize}
 \end{framed}
 \caption{プログラムがデータ構造を確保するために必要なメモリ量の評価}
 \label{fig:memory-eval}
