@@ -129,6 +129,15 @@ $(2 + 14) + (2 + 8) + (2 + 0) + (2 + 4) + (2 + 0) + (2 + 5) =$ 43 byte\\
 
 プログラムサイズおよび静的データサイズをavr-sizeコマンドによって調べた結果と合わせると表\ref{fig:ktimer:size}に示す通りとなる。
 これにより、 KTIMERのFlushの使用量は1858byte、RAMの最大使用量は$45+43=$88byteであると算出される。
+このメモリ使用量は、ATmega8を含む低価格帯のマイクロコントローラにとって十分に許容範囲内であると言える。
+
+参考までに、C言語のみを用いてKTIMERを実装し、実行形式を生成してメモリ使用量の測定を行ったところ、
+表\ref{fig:ktimer:naive:size}に示す結果となった。
+ただし、使用したCコンパイラ及びコンパイルオプションは本節においてSFRPコンパイラがバイナリ生成のために
+使用したものと同じである。
+また、入出力処理に関してはSFRPコンパイラによって標準ライブラリとして提供され、
+Code \ref{code:ktimer:sfrp}においても利用されているATmega8向けの入出力関数を
+そのまま利用した。
 
 \begin{figure}[h]
  \begin{center}
@@ -147,6 +156,17 @@ $(2 + 14) + (2 + 8) + (2 + 0) + (2 + 4) + (2 + 0) + (2 + 5) =$ 43 byte\\
   \end{tabular}
 \caption{KTIMERのメモリ使用量}
 \label{fig:ktimer:size}
+\end{table}
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{l|r}
+    Programサイズ(avr-sizeコマンドより) & 1206 byte \\ \hline
+    Dataサイズ(avr-sizeコマンドより) & 42 byte \\ \hline
+    最大スタックサイズ(-fstack-usageオプションおよび手計算により算出)  & 17 byte \\ \hline
+  \end{tabular}
+\caption{KTIMERをC言語のみを用いて記述した場合のメモリ使用量}
+\label{fig:ktimer:naive:size}
 \end{table}
 
 \subsection{速度性能}

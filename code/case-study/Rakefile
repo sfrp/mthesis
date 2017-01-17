@@ -26,7 +26,7 @@ end
 
 desc '掃除'
 task :clean do
-  sh 'rm -rf ./KTIMER ./KTIMERBench ./KTIMERBench.sfrp ./output ./*.su'
+  sh 'rm -rf ./KTIMER ./KTimerNaive ./KTIMERBench ./KTIMERBench.sfrp ./output ./*.su'
 end
 
 desc 'log_waitを解析して評価値を出す'
@@ -41,4 +41,18 @@ task 'eval-tick' do
   cd 'evaluation_tick' do
     sh 'ruby ../../evaluator/eval.rb < ./log.txt'
   end
+end
+
+desc 'naiveをコンパイル. -fstack-usageは有り.'
+task 'build-naive' do
+  i = './vendor/bundler/ruby/2.3.0/gems/sfrp-1.5.2/base-library'
+  lib_gpio = "#{i}/Base/AVR/ATMEGA8/GPIO.c"
+  lib_timer = "#{i}/Base/AVR/ATMEGA8/Timer.c"
+  sh "avr-gcc #{CC_FLAGS} -fstack-usage -o KTimerNaive -I#{i} KTimerNaive.c #{lib_gpio} #{lib_timer}"
+  sh "avr-size KTimerNaive #{SIZE_FLAGS}"
+end
+
+desc 'naiveをインストール'
+task 'install-naive' => 'build-naive' do
+  sh "sudo avrdude -c avrispmkII -P usb -p m8 -U flash:w:KTimerNaive:e -v"
 end
