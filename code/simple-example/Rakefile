@@ -14,7 +14,7 @@ end
 
 desc '掃除'
 task :clean do
-  sh 'rm -rf ./BlinkLED ./KTimerBench ./KTimerBench.sfrp ./output ./*.su'
+  sh 'rm -rf ./BlinkLED ./BlinkLEDNaive ./KTimerBench ./KTimerBench.sfrp ./output ./*.su'
 end
 
 desc 'log解析して評価値を出す'
@@ -22,4 +22,15 @@ task 'eval' do
   cd 'evaluation' do
     sh 'ruby ../../evaluator/eval.rb < ./log.txt'
   end
+end
+
+desc 'naiveをコンパイル. -fstack-usageは有り.'
+task 'build-naive' do
+  sh "avr-gcc #{CC_FLAGS} -fstack-usage -o BlinkLEDNaive BlinkLEDNaive.c"
+  sh "avr-size BlinkLEDNaive #{SIZE_FLAGS}"
+end
+
+desc 'naiveをインストール'
+task 'install-naive' => 'build-naive' do
+  sh "sudo avrdude -c avrispmkII -P usb -p m8 -U flash:w:BlinkLEDNaive:e -v"
 end
