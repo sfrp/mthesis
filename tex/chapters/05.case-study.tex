@@ -100,7 +100,7 @@ Code \ref{code:ktimer:sfrp}は、SFRPによって記述したKTIMERプログラ�
   \item \texttt{import Base.AVR.ATMEGA8.Timer as Timer}\\
   \texttt{Base.AVR.ATMEGA8.Timer}はATmega8が搭載するタイマーを利用するためのライブラリである。
   \texttt{@dsec}は前回のイテレーションからの秒単位の経過時間であり、
-  \ref{sec:language:model:program}項における時変値$\Delta$の具体形であると言える。
+  \ref{sec:language:model:program}節における時変値$\Delta$の具体形であると言える。
 \end{itemize}
 
 
@@ -170,7 +170,7 @@ Code \ref{code:ktimer:sfrp}においても利用されているATmega8向けの�
 \end{table}
 
 \subsection{速度性能}
-\ref{sec:implementation:performance:speed}項と同じ手法を用いて速度性能の計測を行うために、
+\ref{sec:implementation:performance:speed}節と同じ手法を用いて速度性能の計測を行うために、
 Code \ref{code:ktimer:sfrp:bench}に示す記述をCode \ref{code:ktimer:sfrp}の末尾に追記する。
 これにより、KTIMERの\texttt{PB7}番のI/Oポートを観測することによってイテレーション10000回当りの所要時間を求めることができる。
 
