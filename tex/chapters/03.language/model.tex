@@ -1,23 +1,15 @@
-本節では、具体的な構文には触れることなく、SFRPがどのようなプログラミング言語であるかについての解説を行う。
-まず\ref{sec:language:model:program}項において、SFRPがどのようにシステムを表現するプログラミング言語であるのかを説明する。
-続く\ref{sec:language:model:execution}項では、SFRPプログラムがどのように実行されるのかを示す。
-さらに\ref{sec:language:model:validation}項において、プログラムの実行可能性について述べる。
-
-\subsection{プログラムの表現}\label{sec:language:model:program}
-SFRPプログラムは、時刻によって変動する値(時変値、time-varying value)によって構成される。
-一つのSFRPプログラムは、入力時変値を前提とした出力時変値の定義であると言える。
-
-以下に、SFRPにおいて時変値がどのように表現され、ユーザはどのような形で時変値を定義することができるのかを述べていく。
+\subsection{時変値によるプログラムの表現}\label{sec:language:model:program}
+本項では、SFRPにおいて時変値がどのように表現され、ユーザはどのような形で時変値を定義することができるのかを述べていく。
 
 \begin{itemize}
   \item
-  時変値は時刻$t$をパラメータに取る関数とみなされる。
+  時変値は時刻をパラメータに取る関数とみなされる。
   \begin{equation*}
     Time \rightarrow Value
   \end{equation*}
 
   \item
-  時刻$t$におけるプログラムへの入力は、プリミティブな時変値
+  プログラムへの入力は、プリミティブな時変値
   \footnote{他の時変値を用いて定義されるのではなく、前提として与えられる時変値をプリミティブな時変値と呼ぶ。}
   として表現される。
   \begin{equation*}
@@ -32,7 +24,8 @@ SFRPプログラムは、時刻によって変動する値(時変値、time-vary
   \end{equation*}
 
   \item
-  各時変値は、時刻$t$における値(現在値)の参照と、微小時間$ \Delta t(t) $前の値(直前値)の参照が許されている。
+  各時変値は、時刻$t$における値(現在値)の参照と、微小時間$ \Delta t(t) $前の値(直前値)の参照のみが許されており、
+  任意の時刻における値の参照が許されているわけではない。
   たとえば、時変値Aの現在値と時変値Bの直前値の和を取る時変値Dを定義することができる。
   \begin{equation*}
     D(t) := A(t) + B(t - \Delta t(t))
@@ -45,25 +38,28 @@ SFRPプログラムは、時刻によって変動する値(時変値、time-vary
   \end{equation*}
 
   \item
-  初期値($ t < 0 $における値)を特別に指定した時変値を定義することができる。
-  たとえば、$t \geq 0$においては時変値Aの値を取り、$t < 0$においては0を取る時変値Bを定義することができる。
+  初期値($ t < t_0 $における値)を特別に指定した時変値を定義することができる。
+  たとえば、$t \geq t_0$においては時変値Aの値を取り、$t < t_0$においては0を取る時変値Bを定義することができる。
+  ただし、$t_0$は任意の定数である。
   \begin{equation*}
     B(t) := \begin{cases}
-      A(t) & (t \geq 0) \\
-      0 & (t < 0)
+      A(t) & (t \geq t_0) \\
+      0 & (t < t_0)
     \end{cases}
   \end{equation*}
 
   \item
-  時刻$t$におけるプログラムの出力は、任意の時変値によって定義される。
+  プログラムの出力は、任意の時変値によって定義される。
   以下は、時変値Dの現在値に1を加えた時変値を出力とする例である。
   \begin{equation*}
     output(t) := D(t) + 1
   \end{equation*}
 \end{itemize}
 
-\subsection{プログラムの実行}\label{sec:language:model:execution}
-\ref{sec:language:model:program}項にて示したプログラム表現は、 以下に示す逐次的操作によって実行される。
+\subsection{時変値プログラムの実行}\label{sec:language:model:execution}
+\ref{sec:language:model:program}項にて示した表現は、入力時変値を前提とした出力時変値の定義である。
+これを実行するということはすなわち、入力値の取得と出力値の計算・反映を順に行う処理の反復であり、
+例えば以下に示す逐次操作によって実現することができる。
 \begin{screen}
 \begin{enumerate}
   \item $ {\it timestamp}^{\prime} := 現在時刻$
@@ -79,12 +75,10 @@ SFRPプログラムは、時刻によって変動する値(時変値、time-vary
 \end{enumerate}
 \end{screen}
 
-\subsection{プログラムの実行可能性}\label{sec:language:model:validation}
-あるプログラムに対し、\ref{sec:language:model:execution}項の操作が途中で失敗すること無く適用可能であるとき、
-そのプログラムは実行可能であるとここでは言う。
+以下では、この逐次操作が\ref{sec:language:model:program}項にて示した時変値プログラムに対して、
+失敗すること無く適用可能であるかどうかを論じる。
 \ref{sec:language:model:execution}項の操作において失敗する可能性が考えられるのは、7番目の処理(処理7)である。
 ただし入出力の処理と、数値に対する演算処理は必ず成功すると仮定する。
-本項では、処理7が成功するための条件について議論を行う。
 
 ${\it output}(\tau)$の値の計算過程において、存在しない時変値が参照される場合は当然の事ながら処理7は実行不可能である。
 以下では、存在しない時変値への参照はプログラム中に含まれないと仮定する。
