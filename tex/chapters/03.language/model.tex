@@ -5,7 +5,7 @@
   \item
   時変値は時刻をパラメータに取る関数とみなされる。
   \begin{equation*}
-    Time \rightarrow Value
+    Time \rightarrow Value.
   \end{equation*}
 
   \item
@@ -13,14 +13,14 @@
   \footnote{他の時変値を用いて定義されるのではなく、前提として与えられる時変値をプリミティブな時変値と呼ぶ。}
   として表現される。
   \begin{equation*}
-    {\it input} \, :: \, Time \rightarrow Value
+    {\it input} \, :: \, Time \rightarrow Value.
   \end{equation*}
 
   \item
   他の時変値を参照して演算を加えることにより、新たな時変値を定義することができる。
   たとえば、時変値Aの値と時変値Bの値の和を取る時変値Cを定義することができる。
   \begin{equation*}
-    C(t) := A(t) + B(t)
+    C(t) := A(t) + B(t).
   \end{equation*}
 
   \item
@@ -28,13 +28,13 @@
   任意の時刻における値の参照が許されているわけではない。
   たとえば、時変値Aの現在値と時変値Bの直前値の和を取る時変値Dを定義することができる。
   \begin{equation*}
-    D(t) := A(t) + B(t - \Delta(t))
+    D(t) := A(t) + B(t - \Delta(t)).
   \end{equation*}
 
   \item
   $ \Delta $は微小時間を表すプリミティブな時変値である。
   \begin{equation*}
-    \Delta(t) > 0
+    \Delta(t) > 0.
   \end{equation*}
 
   \item
@@ -45,14 +45,14 @@
     B(t) := \begin{cases}
       A(t) & (t \geq t_0) \\
       0 & (t < t_0)
-    \end{cases}
+    \end{cases}.
   \end{equation*}
 
   \item
   プログラムの出力は、任意の時変値によって定義される。
   以下は、時変値Dの現在値に1を加えた時変値を出力とする例である。
   \begin{equation*}
-    output(t) := D(t) + 1
+    output(t) := D(t) + 1.
   \end{equation*}
 \end{itemize}
 

@@ -36,18 +36,18 @@ in @input2 from $getInput2(@input1)
 \end{lstlisting}
 これら3つの内部ノード定義は、それぞれ以下の時変値定義に相当する。
 \begin{equation*}
-  a(t) := 0
+  a(t) := 0.
 \end{equation*}
 
 \begin{equation*}
-  b(t) := a(t) + 1
+  b(t) := a(t) + 1.
 \end{equation*}
 
 \begin{equation*}
   c(t) := \begin{cases}
     b(t) + c(t-\Delta(t)) & (t \geq 0) \\
     0 & (t < 0)
-  \end{cases}
+  \end{cases}.
 \end{equation*}
 直前値の参照が許されているのは、初期値が定義されたノードのみであることに注意されたい \footnotemark[1]。
 
