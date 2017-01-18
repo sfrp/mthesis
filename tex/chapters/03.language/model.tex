@@ -24,17 +24,17 @@
   \end{equation*}
 
   \item
-  各時変値は、時刻$t$における値(現在値)の参照と、微小時間$ \Delta t(t) $前の値(直前値)の参照のみが許されており、
+  各時変値は、時刻$t$における値(現在値)の参照と、微小時間$ \Delta(t) $前の値(直前値)の参照のみが許されており、
   任意の時刻における値の参照が許されているわけではない。
   たとえば、時変値Aの現在値と時変値Bの直前値の和を取る時変値Dを定義することができる。
   \begin{equation*}
-    D(t) := A(t) + B(t - \Delta t(t))
+    D(t) := A(t) + B(t - \Delta(t))
   \end{equation*}
 
   \item
-  $ \Delta t $は微小時間を表すプリミティブな時変値である。
+  $ \Delta $は微小時間を表すプリミティブな時変値である。
   \begin{equation*}
-    \Delta t(t) > 0
+    \Delta(t) > 0
   \end{equation*}
 
   \item
@@ -66,7 +66,7 @@
   \item $ {\it timestamp} := 現在時刻 (> timestamp^{\prime})$
   \item $ {\it elapsed} := {\it timestamp} - {\it timestamp}^{\prime} $
   \item $\tau$が未定義であるなら$ \tau := 0 $として、そうでないなら$ \tau := \tau + {\it elapsed} $とする。
-  \item $ \Delta t(\tau) := {\it elapsed} $
+  \item $ \Delta(\tau) := {\it elapsed} $
   \item 入力を受け取り、$ {\it input}(\tau) $の値とする。
   \item プログラム中の全ての時変値の、$t=\tau$における値を求める。
   \item $ {\it output}(\tau) $の値を出力する。
@@ -86,34 +86,34 @@
 % ただし時変値Aが時変値Bの現在値を参照して定義されているときに限り、AはBに依存すると見なす。
 %
 % $\tau = a(\neq 0)$において処理7が実行される場合、
-% 過去の$\tau = a - \Delta t(a)$である場合において処理7の実行に成功しているはずである。
-% したがって、プログラム中の任意の時変値$v$について、直前値である$v(\tau - \Delta t(\tau))$は計算可能である。
+% 過去の$\tau = a - \Delta(a)$である場合において処理7の実行に成功しているはずである。
+% したがって、プログラム中の任意の時変値$v$について、直前値である$v(\tau - \Delta(\tau))$は計算可能である。
 % このことから補題1が成り立つ。
 % \begin{itembox}[l]{補題1}
 %   $\tau = 0$のとき処理7の実行に成功する $\Longleftrightarrow$ 常に処理7の実行に成功する
 % \end{itembox}
 %
 % $\tau < 0$において処理5および処理6が行われることはないため、
-% 任意の$a < 0$について、input(a)および$\Delta t(a)$は未定義となる。
+% 任意の$a < 0$について、input(a)および$\Delta(a)$は未定義となる。
 % また、$\tau = 0$のとき
 % \begin{center}
-%   $\tau - \Delta t(\tau) = -\Delta t(0) < 0$
+%   $\tau - \Delta(\tau) = -\Delta(0) < 0$
 % \end{center}
 % である。
-% この2点から、$\tau = 0$のとき時変値inputの直前値である$input(\tau - \Delta t(\tau))$
-% および時変値$\Delta t$の直前値である$\Delta t(\tau - \Delta t(\tau))$は未定義となると分かる。
-% また、現在値あるいは直前値が未定義となる場合が存在する時変値は、inputと$\Delta t$の他に存在しない。
+% この2点から、$\tau = 0$のとき時変値inputの直前値である$input(\tau - \Delta(\tau))$
+% および時変値$\Delta$の直前値である$\Delta(\tau - \Delta(\tau))$は未定義となると分かる。
+% また、現在値あるいは直前値が未定義となる場合が存在する時変値は、inputと$\Delta$の他に存在しない。
 % このことから補題2が成り立つ。
 % \begin{itembox}[l]{補題2}
 %   $\tau = 0$のとき処理7の実行に成功する $\Longleftrightarrow$ \\
-%   プログラム中に、時変値${\it input}$あるいは$\Delta t$に対する直前値参照が存在しない。
+%   プログラム中に、時変値${\it input}$あるいは$\Delta$に対する直前値参照が存在しない。
 % \end{itembox}
 %
 % 補題1および補題2から、プログラムの実行可能性について以下が成り立つ。
 % \begin{screen}
 %   プログラムが実行可能である $\Longleftrightarrow$ \\
-%   プログラム中に、時変値${\it input}$あるいは$\Delta t$に対する直前値参照が存在しない。
+%   プログラム中に、時変値${\it input}$あるいは$\Delta$に対する直前値参照が存在しない。
 % \end{screen}
 %
-% このことから、時変値$input$および$\Delta t$の初期値($t < 0$における値)が特別に定義されていれば、
+% このことから、時変値$input$および$\Delta$の初期値($t < 0$における値)が特別に定義されていれば、
 % プログラムは必ず実行可能であるということも分かる。
