@@ -58,7 +58,9 @@
 \subsection{時変値プログラムの実行}\label{sec:language:model:execution}
 \ref{sec:language:model:program}項にて示した表現は、入力時変値を前提とした出力時変値の定義である。
 これを実行するということはすなわち、入力値の取得と出力値の計算・反映を順に行う処理の反復であり、
-例えば以下に示す逐次操作によって実現することができる。
+例えば図\ref{fig:language:exec}に示す逐次操作によって実現することができる。
+
+\begin{figure}[h]
 \begin{screen}
 \begin{enumerate}
   \item $ {\it timestamp}^{\prime} := 現在時刻$
@@ -116,3 +118,6 @@
 %
 % このことから、時変値$input$および$\Delta$の初期値($t < 0$における値)が特別に定義されていれば、
 % プログラムは必ず実行可能であるということも分かる。
+\caption{プログラムの実行処理}
+\label{fig:language:exec}
+\end{figure}
