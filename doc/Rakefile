@@ -1,0 +1,5 @@
+rule 'abstract.txt' => '../tex/abstract.tex' do
+  input = File.read('../tex/abstract.tex')
+  output = input.split(/\n\n/).map { |x| "　" + x.gsub(/\n/, "") + "\n" }.join
+  File.write('./abstract.txt', output)
+end
