@@ -146,16 +146,8 @@ BLINKLEDのFlashの使用量は486byte、RAMの最大使用量は$8+16=$24byte�
 \subsection{速度性能}\label{sec:implementation:performance:speed}
 メモリ性能の評価と同じ条件で実行形式を生成し、ATmega8実機上で実際にプログラムを動かして実行速度を計測する。
 実行速度はLEDの明滅切り替え(すなわち、出力のHigh/Lowの切り替え)の間隔を測定することによって求める。
-この測定を、実時間計測が可能なもう1つのマイクロコントローラを接続することによって行ったところ、結果は表\ref{fig:imp:time1}の通りとなった。
-
-\begin{table}[h]
-  \centering
-  \begin{tabular}{c}
-    $ \input{code/simple-example/evaluation/result1.txt}ms$ \\ \hline
-  \end{tabular}
-\caption{BLINKLEDのLED明滅が切り替わる時間の間隔(20回平均)}
-\label{fig:imp:time1}
-\end{table}
+この測定を、実時間計測が可能なもう1つのマイクロコントローラを接続することによって行ったところ、
+結果は20回平均で\input{code/simple-example/evaluation/result1.txt}msとなった。
 
 プログラムBLINKLEDにおいて10000回のイテレーションを経てLEDの明滅が切り替わることから、
 イテレーション1回(図\ref{fig:imp:exec}の一巡)に対して平均
